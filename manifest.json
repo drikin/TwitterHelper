@@ -10,6 +10,13 @@
     "default_title": "Twitter"
   },
   "background_page": "background.html",
+  "content_scripts": [
+  {
+      "matches": ["https://twitter.com/*"],
+      "js": ["helper.js"],
+      "run_at": "document_end"
+  }
+  ],
   "permissions": [
     "tabs",
     "notifications",
