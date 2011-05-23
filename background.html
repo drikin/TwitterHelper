@@ -1,0 +1,24 @@
+<html>
+    <script>
+        // Click from Browser Action Icon
+        chrome.browserAction.onClicked.addListener(function(tab) {
+            chrome.tabs.getAllInWindow(null, function(tabs) {
+                var isOpened = false;
+                var target_url = "https://twitter.com/";
+                for (var i = 0, n = tabs.length; i < n; i++) {
+                	console.log(tabs[i].url);
+                    var tab = tabs[i];
+                    if (tab.url === target_url) {
+                        chrome.tabs.update(tab.id, {url: target_url, selected: true});
+                        isOpened = true;
+                        break;
+                    }
+                }
+                if (!isOpened) {
+                    chrome.tabs.create({url: target_url, selected: true});
+                }
+            });
+        });
+    </script>
+</html>
+<!-- vim:set ts=4 sw=4 expandtab: -->

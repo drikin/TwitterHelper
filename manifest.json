@@ -9,6 +9,7 @@
     "default_icon": "twitter48.png",
     "default_title": "Twitter"
   },
+  "background_page": "background.html",
   "permissions": [
     "tabs",
     "notifications",
