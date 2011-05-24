@@ -1,9 +1,10 @@
 {
   "name": "Twitter Helper",
-  "version": "0.1",
+  "version": "0.1.1",
   "description": "Tiny helper extension for Twitter",
   "icons": {
-      "48": "twitter48.png"
+      "48": "twitter48.png",
+      "128": "twitter128.png"
   },
   "browser_action": {
     "default_icon": "twitter48.png",
@@ -12,7 +13,7 @@
   "background_page": "background.html",
   "content_scripts": [
   {
-      "matches": ["https://twitter.com/*"],
+      "matches": ["http://twitter.com/*", "https://twitter.com/*"],
       "js": ["helper.js"],
       "run_at": "document_end"
   }
@@ -20,7 +21,8 @@
   "permissions": [
     "tabs",
     "notifications",
-    "http://belugapods.com/*"
+    "http://twitter.com/*",
+    "https://twitter.com/*"
   ],
   "homepage_url": "https://github.com/drikin/TwitterHelper"
 }
