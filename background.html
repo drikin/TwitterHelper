@@ -6,7 +6,6 @@
                 var isOpened = false;
                 var target_url = "https://twitter.com/";
                 for (var i = 0, n = tabs.length; i < n; i++) {
-                	console.log(tabs[i].url);
                     var tab = tabs[i];
                     if (tab.url.match(/http(s)?:\/\/twitter.com/)) {
                         chrome.tabs.update(tab.id, {selected: true});
@@ -19,6 +18,15 @@
                 }
             });
         });
+
+        // Request from Content Script
+        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+            if (request.type === "updateBadge") {
+                chrome.browserAction.setBadgeText({text:request.text})
+                sendResponse();
+            }
+        });
+
     </script>
 </html>
 <!-- vim:set ts=4 sw=4 expandtab: -->
