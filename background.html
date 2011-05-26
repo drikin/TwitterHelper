@@ -1,5 +1,11 @@
 <html>
     <script>
+        function scrollToTop(tid) {
+            // request to scroll
+            var message = {action: "scrollToTop"};
+            chrome.tabs.sendRequest(tid, message);
+        }
+
         // Click from Browser Action Icon
         chrome.browserAction.onClicked.addListener(function(tab) {
             chrome.tabs.getAllInWindow(null, function(tabs) {
@@ -9,6 +15,7 @@
                     var tab = tabs[i];
                     if (tab.url.match(/http(s)?:\/\/twitter.com/)) {
                         chrome.tabs.update(tab.id, {selected: true});
+                        scrollToTop(tab.id);
                         isOpened = true;
                         break;
                     }

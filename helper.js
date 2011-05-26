@@ -29,6 +29,13 @@
         }
     }
 
+    chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+        if(request["action"] === "scrollToTop") {
+            window.scrollTo(0, 0);
+        }
+        sendResponse();
+    });
+
     document.addEventListener("DOMNodeInserted", DOMNodeInserted, false);
 })();
 // vim:set ts=4 sw=4 expandtab:
