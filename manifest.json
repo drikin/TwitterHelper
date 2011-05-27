@@ -1,6 +1,6 @@
 {
   "name": "Tw Plus",
-  "version": "0.3",
+  "version": "0.4",
   "description": "Tiny helper extension for Twitter",
   "icons": {
       "48": "twitter48.png",
