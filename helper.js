@@ -6,33 +6,45 @@
     }
 
     function installSpeechInput() {
-        var t = document.getElementsByClassName('text-area-editor twttr-editor')[0];
-        if (typeof t !== 'undefined') {
-            document.removeEventListener('DOMNodeInserted', installSpeechInput);
+        var sq = document.getElementById('search-query');
+        if (typeof sq !== 'undefined') {
+            sq.setAttribute('x-Webkit-Speech');
+        }
 
-            var i = document.createElement('input');
-            t.appendChild(i);
-
-            i.id = 'twp-speech-input';
-            i.setAttribute('x-Webkit-Speech');
-            i.setAttribute('autocomplete', 'off');
-            i.setAttribute('autocorrect', 'off');
-            i.onwebkitspeechchange = speechChange;
-            i.style.border = '0px';
-            i.style.top = '2px';
-            i.style.right = '-25px';
-            i.style.position = 'absolute';
-            i.style.color = 'rgba(0, 0, 255, 0)';
-            i.style.background = 'rgba(0, 0, 255, 0)';
-            i.style.outline = 'none';
-            i.style.fontSize = '20px';
-            i.style.width = '20px';
+        var t = document.getElementsByClassName('text-area-editor twttr-editor');
+        for (var i = 0, l = t.length; i < l; i++) {
+            var tsp = document.getElementById('twp-speech-input' + i);
+            if (!tsp) {
+                if (typeof t[i] !== 'undefined') {
+                    var ipt = createSpeechInput('twp-speech-input' + i);
+                    ipt.onwebkitspeechchange = function() {
+                        var t = document.getElementsByClassName('twitter-anywhere-tweet-box-editor');
+                        t[i - 1].value += document.getElementById('twp-speech-input' + (i - 1)).value;
+                    };
+                    t[i].appendChild(ipt);
+                }
+            }
         }
     }
 
-    function speechChange() {
-        var t = document.getElementsByClassName('twitter-anywhere-tweet-box-editor')[0];
-        t.value += document.getElementById("twp-speech-input").value;
+    function createSpeechInput(id) {
+        var i = document.createElement('input');
+
+        i.id = id;
+        i.setAttribute('x-Webkit-Speech');
+        i.setAttribute('autocomplete', 'off');
+        i.setAttribute('autocorrect', 'off');
+        i.style.border = '0px';
+        i.style.top = '0px';
+        i.style.right = '0px';
+        i.style.position = 'absolute';
+        i.style.color = 'rgba(0, 0, 255, 0)';
+        i.style.background = 'rgba(0, 0, 255, 0)';
+        i.style.outline = 'none';
+        i.style.fontSize = '20px';
+        i.style.width = '20px';
+
+        return i;
     }
 
     function DOMNodeInserted() {
@@ -61,7 +73,7 @@
     function markAsRead() {
         var items = document.getElementsByClassName('stream-item');
         for (var i = 0, l = items.length; i < l; i++) {
-            items[i].style.opacity = 0.5;
+            items[i].style.opacity = 0.7;
         }
     }
 
