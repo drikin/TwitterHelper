@@ -19,7 +19,13 @@
                     var ipt = createSpeechInput('twp-speech-input' + i);
                     ipt.onwebkitspeechchange = function() {
                         var t = document.getElementsByClassName('twitter-anywhere-tweet-box-editor');
-                        t[i - 1].value += document.getElementById('twp-speech-input' + (i - 1)).value;
+                        var target = t[i - 1];
+                        var txt = target.value;
+                        var start = target.selectionStart;
+                        var end = target.selectionEnd;
+                        var insertTxt = document.getElementById('twp-speech-input' + (i - 1)).value;
+                        target.value = txt.substring(0, start) + insertTxt + txt.substring(end, txt.length);
+                        target.selectionStart = target.selectionEnd = start + insertTxt.length;
                     };
                     t[i].appendChild(ipt);
                 }
