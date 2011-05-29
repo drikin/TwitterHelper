@@ -1,5 +1,69 @@
 <html>
     <script>
+        // Settings
+        function Settings(defaults) {
+            this.defaults = defaults;
+            this.storage = chrome.extension.getBackgroundPage().localStorage;
+            this.listenerTabs= {};
+
+            var self = this;
+            chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+                var action = request["action"] || request["method"];
+                var key = request["key"];
+                if(action === "initSettings") {
+                    sendResponse(self.all());
+                    self.listenerTabs[sender.tab.id] = sender.tab;
+                } else if(action === "getSetting" && key) {
+                    sendResponse(self.get(key));
+                }
+            });
+        }
+        Settings.prototype = {
+            get: function(key) {
+                var value = this.storage.getItem(key);
+                if(value === null && this.defaults.hasOwnProperty(key)) {
+                    value = this.defaults[key];
+                }
+                return value;
+            },
+            all: function() {
+                var settings = {};
+                for(var key in this.defaults) {
+                    if(this.defaults.hasOwnProperty(key)) {
+                        settings[key] = this.get(key);
+                    }
+                }
+                return settings;
+            },
+            set: function(key, value) {
+                this.storage.setItem(key, value);
+                this.notify(key, value);
+            },
+            remove: function(key) {
+                this.storage.removeItem(key);
+            },
+            notify: function(key, value) {
+                var message = {action: "updateSetting", key: key, value: value};
+                chrome.extension.sendRequest(message);
+                for(var id in this.listenerTabs) {
+                    var tab = this.listenerTabs[id];
+                    try {
+                        chrome.tabs.sendRequest(tab.id, message);
+                    } catch(e) {
+                        delete this.listenerTabs[id];
+                    }
+                }
+            }
+        };
+
+        // Default Settings Object
+        window.settings = new Settings({
+            markCurrentTweetsAsTransparent: true,
+            languageForSpeechInput: "en"
+        });
+
+
+
         function scrollToTop(tid) {
             // request to scroll
             var message = {action: "scrollToTop"};

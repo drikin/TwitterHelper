@@ -1,6 +1,6 @@
 {
   "name": "Tw Plus",
-  "version": "0.5.1",
+  "version": "0.6",
   "description": "Tiny helper extension for Twitter",
   "icons": {
       "48": "twitter48.png",
@@ -24,5 +24,6 @@
     "http://twitter.com/*",
     "https://twitter.com/*"
   ],
-  "homepage_url": "https://github.com/drikin/TwitterHelper"
+  "homepage_url": "https://github.com/drikin/TwitterHelper",
+  "options_page": "settings.html"
 }

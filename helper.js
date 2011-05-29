@@ -1,8 +1,30 @@
 (function() {
+    // Settings
+    var settings = {};
 
-    function setLocale(lo) {
+    function initSettings() {
+        chrome.extension.sendRequest({action: "initSettings"}, function(value) {
+            settings = value;
+            setLocale();
+        });
+        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+            if(request["action"] === "updateSetting") {
+                settings[request["key"]] = request["value"];
+            }
+            if(request["key"] === 'languageForSpeechInput') {
+                setLocale();
+            }
+            sendResponse();
+        });
+    }
+
+    initSettings();
+
+
+
+    function setLocale() {
         var h = document.getElementsByTagName('html')[0];
-        h.lang = lo;
+        h.lang = settings['languageForSpeechInput'];
     }
 
     function installSpeechInput() {
@@ -77,9 +99,11 @@
     }
 
     function markAsRead() {
-        var items = document.getElementsByClassName('stream-item');
-        for (var i = 0, l = items.length; i < l; i++) {
-            items[i].style.opacity = 0.7;
+    	if (JSON.parse(settings['markCurrentTweetsAsTransparent'])) {
+            var items = document.getElementsByClassName('stream-item');
+            for (var i = 0, l = items.length; i < l; i++) {
+                items[i].style.opacity = 0.7;
+            }
         }
     }
 
@@ -92,7 +116,5 @@
 
     document.addEventListener("DOMNodeInserted", DOMNodeInserted, false);
     document.addEventListener("DOMNodeInserted", installSpeechInput, false);
-
-    setLocale('ja');
 })();
 // vim:set ts=4 sw=4 expandtab:
