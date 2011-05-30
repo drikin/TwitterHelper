@@ -79,6 +79,7 @@
         installEventListener();
         installHashTagInput();
         updateBadge();
+        updateReplyField();
     }
 
     function installEventListener() {
@@ -140,8 +141,23 @@
         }
     }
 
+    var screenname = null;
+    function updateReplyField() {
+        if (!screenname) {
+            screenname = document.getElementById('screen-name').outerText;
+        }
+        var nodes = document.getElementsByClassName('stream-item-content');
+        for (var i = 0, l = nodes.length; i < l; i++) {
+            var t = nodes[i];
+            var txt = t.getElementsByClassName('tweet-text')[0].textContent;
+            if (txt.match(screenname)) {
+                t.style.backgroundColor = 'rgba(255, 0, 0, 0.199219)';
+            }
+        }
+    }
+
     function markAsRead() {
-    	if (JSON.parse(settings['markCurrentTweetsAsTransparent'])) {
+        if (JSON.parse(settings['markCurrentTweetsAsTransparent'])) {
             var items = document.getElementsByClassName('stream-item');
             for (var i = 0, l = items.length; i < l; i++) {
                 items[i].style.opacity = 0.7;
