@@ -10,11 +10,14 @@
             chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
                 var action = request["action"] || request["method"];
                 var key = request["key"];
+                var value = request["value"];
                 if(action === "initSettings") {
                     sendResponse(self.all());
                     self.listenerTabs[sender.tab.id] = sender.tab;
                 } else if(action === "getSetting" && key) {
                     sendResponse(self.get(key));
+                } else if(action === "setSetting" && key && value) {
+                   self.set(key, value);
                 }
             });
         }
@@ -59,7 +62,8 @@
         // Default Settings Object
         window.settings = new Settings({
             markCurrentTweetsAsTransparent: true,
-            languageForSpeechInput: "en"
+            languageForSpeechInput: "en",
+            hashtag: ""
         });
 
 
