@@ -78,8 +78,9 @@
     function DOMNodeInserted() {
         installEventListener();
         installHashTagInput();
+        installFavoriteUserEventListener();
         updateBadge();
-        updateReplyField();
+        updateFieldColor();
     }
 
     function installEventListener() {
@@ -105,6 +106,35 @@
         }
     }
 
+    function installFavoriteUserEventListener() {
+        var targets = document.getElementsByClassName('tweet-image');
+        for (var i = 0, l = targets.length; i < l; i++) {
+            var t = targets[i];
+            if (!t.onclick) {
+                t.onclick = function(event) {
+                    var sn = event.target.parentElement.parentElement.getAttribute('data-screen-name');
+                    if (typeof settings['favoriteUsers'] === 'undefined') {
+                        settings['favoriteUsers'] = [];
+                    }
+                    // check if the name exist
+                    var f = settings['favoriteUsers'];
+                    var isDeleted = false;
+                    for (var i = 0, l = f.length; i < l; i++) {
+                        if (f[i] === sn) {
+                            f.splice(i, 1);
+                            cleanFieldColor();
+                            isDeleted = true;
+                            break;
+                        }
+                    }
+                    if (!isDeleted) {
+                        f.push(sn);
+                    }
+                }
+            }
+        }
+    }
+
     function createHashTagInput(id) {
         var i = document.createElement('input');
         i.id = id;
@@ -127,7 +157,6 @@
         var i = document.getElementById('twp-hashtag-input');
         var t = document.getElementsByClassName('twitter-anywhere-tweet-box-editor')[0];
         t.value += ' ' + i.value;
-        console.log(t.value);
     }
 
     function updateBadge() {
@@ -142,17 +171,40 @@
     }
 
     var screenname = null;
-    function updateReplyField() {
+    function updateFieldColor() {
+        var nodes = document.getElementsByClassName('stream-item-content');
+        // update for favorite users
+        var f = settings['favoriteUsers'];
+        if (f) {
+            for (var i = 0, l = nodes.length; i < l; i++) {
+                var t = nodes[i];
+                var uname = t.getAttribute('data-screen-name');
+                for (var n =0, m = f.length; n < m; n++) {
+                    if (uname === f[n]) {
+                        t.style.backgroundColor = 'rgba(0, 255, 0, 0.199219)';
+                        break;
+                    }
+                }
+            }
+        }
+
+        // update for reply
         if (!screenname) {
             screenname = document.getElementById('screen-name').outerText;
         }
-        var nodes = document.getElementsByClassName('stream-item-content');
         for (var i = 0, l = nodes.length; i < l; i++) {
             var t = nodes[i];
             var txt = t.getElementsByClassName('tweet-text')[0].textContent;
             if (txt.match(screenname)) {
                 t.style.backgroundColor = 'rgba(255, 0, 0, 0.199219)';
             }
+        }
+    }
+
+    function cleanFieldColor() {
+        var nodes = document.getElementsByClassName('stream-item-content');
+        for (var i = 0, l = nodes.length; i < l; i++) {
+            nodes[i].style.backgroundColor = '';
         }
     }
 
