@@ -71,12 +71,21 @@ li {
     for(var i=0; i<items.length; i++) {
       var item = items[i];
       var key = item.getAttribute("id");
-      item.checked = settings.get(key);
-      item.addEventListener("click", function(event) {
-        var key = event.target.id;
-        var item = event.target;
-        settings.set(key, item.checked);
-      });
+      if (item.type === 'checkbox') {
+        item.checked = settings.get(key);
+        item.addEventListener("click", function(event) {
+          var key = event.target.id;
+          var item = event.target;
+          settings.set(key, item.checked);
+          });
+      } else if (item.type = 'text') {
+        item.value = settings.get(key);
+        item.addEventListener("change", function(event) {
+          var key = event.target.id;
+          var value = event.target.value;
+          settings.set(key, value);
+        });
+      }
     }
     // Setup for select
     var key = "languageForSpeechInput";
@@ -107,6 +116,10 @@ li {
         <option value="en">English</option>
         <option value="ja">Japanese</option>
       </select>
+      </li>
+    <li>
+      Hashtag:&nbsp;
+      <input type='text' id="hashtag"/>
     </li>
   </ul>
 </div>

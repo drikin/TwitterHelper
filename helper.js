@@ -94,15 +94,6 @@
     }
 
     function installHashTagInput() {
-        var id = 'twp-hashtag-input';
-        var ipt = document.getElementById(id);
-        if (!ipt) {
-            var t = document.getElementsByClassName('text-area-editor twttr-editor')[0];
-            if (t && typeof t.appendChild === 'function') {
-                var n = createHashTagInput(id);
-                t.appendChild(n);
-            }
-        }
         var button = document.getElementsByClassName('tweet-button')[0];
         if (button) {
             button.addEventListener('mousedown', addHashTag, false);
@@ -136,28 +127,9 @@
         }
     }
 
-    function createHashTagInput(id) {
-        var i = document.createElement('input');
-        i.id = id;
-        i.value = settings['hashtag'];
-        i.placeholder = 'Hashtag';
-        i.style.padding = '2px 8px 2px 8px';
-        i.style.border = '1px solid #CCC';
-        i.style.borderRadius = '4px';
-        i.style.color = 'rgb(34, 34, 34)';
-        i.style.outline = 'none';
-        i.style.boxShadow = '0 1px #fff';
-        i.addEventListener('change', function(event) {
-            chrome.extension.sendRequest({action: "setSetting", key:'hashtag', value:event.target.value});
-        });
-
-        return i;
-    }
-
     function addHashTag() {
-        var i = document.getElementById('twp-hashtag-input');
         var t = document.getElementsByClassName('twitter-anywhere-tweet-box-editor')[0];
-        t.value += ' ' + i.value;
+        t.value += ' ' + settings['hashtag'];
     }
 
     function updateBadge() {
