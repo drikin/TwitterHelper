@@ -64,16 +64,14 @@ li {
 (function() {
   var background = chrome.extension.getBackgroundPage();
   var settings = background.settings;
-
-  // TODO non checkbox form item.
+  // TODO non checkbox for item.
   window.init = function() {
     // Setup for input
     var items = document.getElementsByTagName("input");
     for(var i=0; i<items.length; i++) {
       var item = items[i];
       var key = item.getAttribute("id");
-
-      item.checked = JSON.parse(settings.get(key));
+      item.checked = settings.get(key);
       item.addEventListener("click", function(event) {
         var key = event.target.id;
         var item = event.target;
