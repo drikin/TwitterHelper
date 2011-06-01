@@ -116,9 +116,6 @@
             if (!t.onclick) {
                 t.onclick = function(event) {
                     var sn = event.target.parentElement.parentElement.getAttribute('data-screen-name');
-                    if (typeof settings['favoriteUsers'] === 'undefined') {
-                        settings['favoriteUsers'] = [];
-                    }
                     // check if the name exist
                     var f = settings['favoriteUsers'];
                     var isDeleted = false;
@@ -133,6 +130,7 @@
                     if (!isDeleted) {
                         f.push(sn);
                     }
+                    chrome.extension.sendRequest({action: "setSetting", key:'favoriteUsers', value:f});
                 }
             }
         }
@@ -176,17 +174,20 @@
     var screenname = null;
     function updateFieldColor() {
         var ns = document.getElementsByClassName('stream-item-content');
+
         var fs = settings['favoriteUsers'];
+
         if (!screenname) {
             screenname = document.getElementById('screen-name').outerText;
         }
+
         for (var i = 0, l = ns.length; i < l; i++) {
             var t = ns[i];
 
             // update for favorite users
             if (fs) {
                 var uname = t.getAttribute('data-screen-name');
-                for (var n =0, m = fs.length; n < m; n++) {
+                for (var n = 0, m = fs.length; n < m; n++) {
                     if (uname === fs[n]) {
                         t.style.backgroundColor = 'rgba(0, 255, 0, 0.199219)';
                         break;
@@ -210,7 +211,7 @@
     }
 
     function markAsRead() {
-        if (JSON.parse(settings['markCurrentTweetsAsTransparent'])) {
+        if (settings['markCurrentTweetsAsTransparent']) {
             var is = document.getElementsByClassName('stream-item');
             for (var i = 0, l = is.length; i < l; i++) {
                 is[i].style.opacity = 0.7;
