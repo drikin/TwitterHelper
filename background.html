@@ -27,7 +27,11 @@
                 if(value === null && this.defaults.hasOwnProperty(key)) {
                     value = this.defaults[key];
                 }
-                return value;
+                try {
+                    return JSON.parse(value);
+                } catch(e) {
+                    return value;
+                }
             },
             all: function() {
                 var settings = {};
@@ -39,7 +43,7 @@
                 return settings;
             },
             set: function(key, value) {
-                this.storage.setItem(key, value);
+                this.storage.setItem(key, JSON.stringify(value));
                 this.notify(key, value);
             },
             remove: function(key) {
@@ -63,7 +67,8 @@
         window.settings = new Settings({
             markCurrentTweetsAsTransparent: true,
             languageForSpeechInput: "en",
-            hashtag: ""
+            hashtag: "",
+            favoriteUsers: []
         });
 
 
