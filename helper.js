@@ -75,12 +75,15 @@
         return i;
     }
 
-    function DOMNodeInserted() {
-        installEventListener();
-        installHashTagInput();
-        installFavoriteUserEventListener();
-        updateBadge();
-        updateFieldColor();
+    function DOMNodeInserted(event) {
+        if ((event.target instanceof Text) === false) {
+            installSpeechInput();
+            installEventListener();
+            installHashTagInput();
+            installFavoriteUserEventListener();
+            updateBadge();
+            updateFieldColor();
+        }
     }
 
     function installEventListener() {
@@ -147,7 +150,7 @@
         i.style.outline = 'none';
         i.style.boxShadow = '0 1px #fff';
         i.addEventListener('change', function(event) {
-        	chrome.extension.sendRequest({action: "setSetting", key:'hashtag', value:event.target.value});
+            chrome.extension.sendRequest({action: "setSetting", key:'hashtag', value:event.target.value});
         });
 
         return i;
@@ -172,28 +175,26 @@
 
     var screenname = null;
     function updateFieldColor() {
-        var nodes = document.getElementsByClassName('stream-item-content');
-        // update for favorite users
-        var f = settings['favoriteUsers'];
-        if (f) {
-            for (var i = 0, l = nodes.length; i < l; i++) {
-                var t = nodes[i];
+        var ns = document.getElementsByClassName('stream-item-content');
+        var fs = settings['favoriteUsers'];
+        if (!screenname) {
+            screenname = document.getElementById('screen-name').outerText;
+        }
+        for (var i = 0, l = ns.length; i < l; i++) {
+            var t = ns[i];
+
+            // update for favorite users
+            if (fs) {
                 var uname = t.getAttribute('data-screen-name');
-                for (var n =0, m = f.length; n < m; n++) {
-                    if (uname === f[n]) {
+                for (var n =0, m = fs.length; n < m; n++) {
+                    if (uname === fs[n]) {
                         t.style.backgroundColor = 'rgba(0, 255, 0, 0.199219)';
                         break;
                     }
                 }
             }
-        }
 
-        // update for reply
-        if (!screenname) {
-            screenname = document.getElementById('screen-name').outerText;
-        }
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            var t = nodes[i];
+            // update for reply
             var txt = t.getElementsByClassName('tweet-text')[0].textContent;
             if (txt.match(screenname)) {
                 t.style.backgroundColor = 'rgba(255, 0, 0, 0.199219)';
@@ -202,17 +203,17 @@
     }
 
     function cleanFieldColor() {
-        var nodes = document.getElementsByClassName('stream-item-content');
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            nodes[i].style.backgroundColor = '';
+        var ns = document.getElementsByClassName('stream-item-content');
+        for (var i = 0, l = ns.length; i < l; i++) {
+            ns[i].style.backgroundColor = '';
         }
     }
 
     function markAsRead() {
         if (JSON.parse(settings['markCurrentTweetsAsTransparent'])) {
-            var items = document.getElementsByClassName('stream-item');
-            for (var i = 0, l = items.length; i < l; i++) {
-                items[i].style.opacity = 0.7;
+            var is = document.getElementsByClassName('stream-item');
+            for (var i = 0, l = is.length; i < l; i++) {
+                is[i].style.opacity = 0.7;
             }
         }
     }
@@ -225,6 +226,5 @@
     });
 
     document.addEventListener("DOMNodeInserted", DOMNodeInserted, false);
-    document.addEventListener("DOMNodeInserted", installSpeechInput, false);
 })();
 // vim:set ts=4 sw=4 expandtab:
